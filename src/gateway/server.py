@@ -1,5 +1,5 @@
 import os, gridfs, pika , json
-from flask import Flask, requests
+from flask import Flask, request
 from flask_pymongo import PyMongo
 from auth import validate
 from auth_svc import access
@@ -12,13 +12,31 @@ mongo = PyMongo(server)
 
 fs = gridfs.GridFS(mongo.db)
 
-Connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq")) # this is the connection to the rabbitmq server
-
-channel = Connection.channel()
+'''
+Now below connection object is the connection to the rabbitmq server
+The pika.BlockingConnection function creates a "blocking" connection to the RabbitMQ server,
+which means that the connection is established synchronously and the function will block (wait) until the connection is established. 
+This is in contrast to a "non-blocking" connection,
+which is established asynchronously and does not block the calling thread while the connection is being established.
+'''
+connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
+channel = connection.channel()
 
 @server.route("/login", methods=["POST"])
 def login():
-    token, error = access.login(request)  # this request is from flask which is imported above and this is the request from the client
+    '''
+    This function is used to login the user
+    and this will interact with the auth_svc.access.login function
+    '''
+    
+    request_from_flask = request
+    '''
+    This request is from flask which is imported above.
+    It represents the HTTP request made by the client (e.g., a web browser)
+    and contains information about the request, such as the HTTP method (e.g., GET, POST), the URL, 
+    the headers, and the body of the request.
+    '''
+    token, error = access.login(request_from_flask)  
     
     if not error:
         return token
