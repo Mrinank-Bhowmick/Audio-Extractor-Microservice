@@ -1,4 +1,4 @@
-import picka, json
+import pika, json
 
 def upload(file,gridfs_instance,rabbitmq_channel,access):
     
