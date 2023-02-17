@@ -158,3 +158,4 @@ config_.ini
 secret.yaml
 configmap.yaml
 pyvenv.cfg
+.vscode/

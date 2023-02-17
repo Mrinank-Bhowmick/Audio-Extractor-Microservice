@@ -2,7 +2,7 @@ import os, gridfs, pika , json
 from flask import Flask, request
 from flask_pymongo import PyMongo
 from auth import validate
-from auth_svc import access
+from auth_service import access
 from storage import util
 
 server = Flask(__name__)
@@ -10,7 +10,7 @@ server.config["MONGO_URI"]="mongodb url"
 
 mongo = PyMongo(server)
 
-fs = gridfs.GridFS(mongo.db)
+gridfs_instance= gridfs.GridFS(mongo.db)
 
 '''
 Now below connection object is the connection to the rabbitmq server
@@ -26,7 +26,7 @@ channel = connection.channel()
 def login():
     '''
     This function is used to login the user
-    and this will interact with the auth_svc.access.login function
+    and this will interact with the auth_service.access.login function
     '''
     
     request_from_flask = request
@@ -55,7 +55,7 @@ def upload():
             return "Exactly one file is required", 400
         
         for _,file in request.files.items():
-            error = util.upload(file,fs, channel, access)
+            error = util.upload(file,gridfs_instance, channel, access)
             
             if error :
                 return error

@@ -1,0 +1,27 @@
+# Ignore any compiled Python files
+*.pyc
+
+# Ignore any local virtual environment files
+venv/
+
+# Ignore any testing and coverage files
+.coverage
+.tox/
+
+# Ignore any log files
+logs/
+
+# Ignore any local development files
+*.env
+
+# Ignore any build artifacts
+build/
+dist/
+
+# Ignore any Kubernetes manifests
+*.yaml
+*.yml
+*.json
+
+# Ignore any version control files
+.git/
