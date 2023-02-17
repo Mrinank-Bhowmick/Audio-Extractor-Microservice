@@ -6,7 +6,7 @@ from auth_service import access
 from storage import util
 
 server = Flask(__name__)
-server.config["MONGO_URI"]="mongodb url"
+server.config["MONGO_URI"] = "mongodb://admin:admin@mongodb:27017/videos"
 
 mongo = PyMongo(server)
 
