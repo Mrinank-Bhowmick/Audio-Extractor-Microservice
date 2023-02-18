@@ -5,7 +5,10 @@ from convert import to_mp3
 
 
 def main():
-    client = MongoClient("admin:admin@mongodb", 27017)
+    username=os.environ.get("MONGO_USERNAME")
+    password=os.environ.get("MONGO_PASSWORD")
+    client = MongoClient(f"mongodb+srv://{username}:{password}@mongodb-cluster.hhz7bbb.mongodb.net/?retryWrites=true&w=majority")
+    
     db_videos = client.videos
     db_mp3s = client.mp3s
     # gridfs
@@ -17,9 +20,9 @@ def main():
     channel = connection.channel()
 
     def callback(ch, method, properties, body):
-        err = to_mp3.start(body, fs_videos, fs_mp3s, ch)
-        if err:
-            ch.basic_nack(delivery_tag=method.delivery_tag)
+        error = to_mp3.start(body, fs_videos, fs_mp3s, ch)
+        if error:
+            ch.basic_nack(delivery_tag=method.delivery_tag) # negative Aknowledgement
         else:
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -39,4 +42,4 @@ if __name__ == "__main__":
         try:
             sys.exit(0)
         except SystemExit:
-            os._exit(0)
+            os.exit(0)

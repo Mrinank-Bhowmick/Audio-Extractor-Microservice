@@ -4,9 +4,13 @@ from flask_pymongo import PyMongo
 from auth import validate
 from auth_service import access
 from storage import util
+import os 
 
 server = Flask(__name__)
-server.config["MONGO_URI"] = "mongodb://admin:admin@mongodb:27017/videos"
+username=os.environ.get("MONGO_USERNAME")
+password=os.environ.get("MONGO_PASSWORD")
+server.config["MONGO_URI"] = f"mongodb+srv://{username}:{password}@mongodb-cluster.hhz7bbb.mongodb.net/videos"
+
 
 mongo = PyMongo(server)
 
