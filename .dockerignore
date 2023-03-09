@@ -25,3 +25,19 @@ dist/
 
 # Ignore any version control files
 .git/
+
+# Ignore any node_modules directory
+node_modules/
+
+# Ignore any editor specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swo
+*.swp
+*.tmp
+
+# Ignore any other unnecessary files
+.DS_Store
+Thumbs.db
