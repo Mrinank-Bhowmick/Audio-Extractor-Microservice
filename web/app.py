@@ -65,19 +65,15 @@ async def read_form(request: Request):
 @app.post("/uploading", response_class=HTMLResponse)
 async def process_upload(request: Request, file: UploadFile = File(...)):
     token = request.cookies.get("token")
-    
-    contents= await file.read()
-    
-    
+
+    contents = await file.read()
+
     # Upload the file to the server with the Bearer token in the header of the request
     async with aiohttp.ClientSession() as session:
         headers = {"Authorization": f"Bearer {token}"}
         data = aiohttp.FormData()
         data.add_field(
-            "file",
-            contents,
-            filename=file.filename,
-            content_type="video/mp4"
+            "file", contents, filename=file.filename, content_type="video/mp4"
         )
         async with session.post(
             "http://mp3convertor.mrinank-bhowmick.cloud.okteto.net/upload",
