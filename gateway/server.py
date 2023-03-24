@@ -124,7 +124,7 @@ def download():
             return "fid is required", 400
 
         try:
-            out = fs_mp3s.get(ObjectId(fid_string))
+            out = gridfs_instance_mp3s.get(ObjectId(fid_string))
             return send_file(out, download_name=f"{fid_string}.mp3")
         except Exception as err:
             print(err)
