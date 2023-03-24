@@ -5,10 +5,14 @@ from convert import to_mp3
 
 
 def main():
-    username=os.environ.get("MONGO_USERNAME")
-    password=os.environ.get("MONGO_PASSWORD")
-    client = MongoClient(f"mongodb+srv://project_user:project_user@mongodb-cluster.hhz7bbb.mongodb.net/?retryWrites=true&w=majority")
-    print("...........................................................................................")
+    username = os.environ.get("MONGO_USERNAME")
+    password = os.environ.get("MONGO_PASSWORD")
+    client = MongoClient(
+        f"mongodb+srv://project_user:project_user@mongodb-cluster.hhz7bbb.mongodb.net/?retryWrites=true&w=majority"
+    )
+    print(
+        "..........................................................................................."
+    )
     db_videos = client.videos
     db_mp3s = client.mp3s
     # gridfs
@@ -19,20 +23,20 @@ def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq"))
     channel = connection.channel()
     print("Done till here")
+
     def callback(ch, method, properties, body):
         error = to_mp3.start(body, fs_videos, fs_mp3s, ch)
         if error:
-            ch.basic_nack(delivery_tag=method.delivery_tag) # negative Aknowledgement
+            ch.basic_nack(delivery_tag=method.delivery_tag)  # negative Aknowledgement
         else:
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    channel.basic_consume(
-        queue='video', on_message_callback=callback
-    )
+    channel.basic_consume(queue="video", on_message_callback=callback)
 
     print("Waiting for messages. To exit press CTRL+C")
 
     channel.start_consuming()
+
 
 if __name__ == "__main__":
     try:
