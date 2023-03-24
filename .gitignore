@@ -161,3 +161,4 @@ pyvenv.cfg
 .vscode/
 videotomp3.mp4
 init.sql
+.vercel
