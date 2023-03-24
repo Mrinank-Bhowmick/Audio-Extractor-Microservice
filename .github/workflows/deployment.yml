@@ -1,0 +1,29 @@
+name: Deployment
+
+on:
+  workflow_run:
+    workflows: ["Publish Docker Images"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@main
+
+    - uses: okteto/login@master
+      with:
+        token: ${{ secrets.OKTETO_TOKEN }}
+    
+    - name: "Apply changes to auth"
+      # apply only if "Build and push auth image" and " Build and push converter image" job is successful 
+      if: ${{ github.event.job.status == 'success' && github.event.job.name == 'Build and push auth image' }} 
+      with:
+        namespace: mrinank-bhowmick
+        token: ${{ secrets.OKTETO_TOKEN }}
+        manifest: ./auth/manifests/.
+
+      else:
+        run: echo "Skipping apply changes to auth since 'Build and push auth image' job is not successful or there are no changes in ./auth"
