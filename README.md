@@ -10,6 +10,48 @@ The Audio Extractor Microservice is an API that allows you to extract the audio 
 
 [https://audioextractor.vercel.app/upload](https://audioextractor.vercel.app/upload) - This is the upload URL for the API. You can use this URL to upload a video file to the server.
 
-<h3>Licence</h3>
+
+# Api Documentation
+<details close="">
+<summary>
+ <g-emoji class="emoji" alias="Login ">🌐</g-emoji>
+  <strong>Login : </strong>
+</summary>
+
+```
+curl -X POST http://mp3convertor.mrinank-bhowmick.cloud.okteto.net/login -u username:password
+
+- This will return a JWT Token which you can use to access the server.
+```
+
+</details>
+
+<Br>
+
+<details close="">
+<summary>
+ <g-emoji class="emoji" alias="upload">🌐</g-emoji>
+  <strong>Upload : </strong>
+</summary>
+
+```
+curl -X POST -F 'file=@./path/to/file' -H 'Authorization: Bearer <token>' http://mp3convertor.mrinank-bhowmick.cloud.okteto.net/upload
+```
+
+</details>
+
+<br>
+
+<details close="">
+<summary>
+ <g-emoji class="emoji" alias="upload">🌐</g-emoji>
+  <strong>Download : </strong>
+</summary>
+    
+    ```
+    curl -X GET -H 'Authorization: Bearer <token>' http://mp3convertor.mrinank-bhowmick.cloud.okteto.net/download?fid=<file_id> --output <file_name>.mp3
+    ```
+
+<h2>Licence</h2>
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
