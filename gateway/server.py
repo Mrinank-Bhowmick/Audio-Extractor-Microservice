@@ -15,7 +15,7 @@ password = os.environ.get("MONGO_PASSWORD")
 
 mongo_video = PyMongo(
     server,
-    uri="mongodb+srv://project_user:project_user@mongodb-cluster.hhz7bbb.mongodb.net/video?retryWrites=true&w=majority",
+    uri="mongodb+srv://project_user:project_user@mongodb-cluster.hhz7bbb.mongodb.net/videos?retryWrites=true&w=majority",
 )
 
 mongo_mp3 = PyMongo(

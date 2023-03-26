@@ -55,3 +55,11 @@ curl -X POST -F 'file=@./path/to/file' -H 'Authorization: Bearer <token>' http:/
 <h2>Licence</h2>
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+
+Example
+
+curl -X POST http://mp3convertor.mrinank-bhowmick.cloud.okteto.net/login -u georgio@email.com:Admin123
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imdlb3JnaW9AZW1haWwuY29tIiwiZXhwIjoxNjc5ODEyODU3LCJpYXQiOjE2Nzk3MjY0NTcsImFkbWluIjp0cnVlfQ.BatkN0w8hJj7xSB1XP-7dGtS82Sng9BC1szPoYbvaMQ
+
+curl -X POST -F 'file=@./.data/videotomp3.mp4' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imdlb3JnaW9AZW1haWwuY29tIiwiZXhwIjoxNjc5ODEyODU3LCJpYXQiOjE2Nzk3MjY0NTcsImFkbWluIjp0cnVlfQ.BatkN0w8hJj7xSB1XP-7dGtS82Sng9BC1szPoYbvaMQ' http://mp3convertor.mrinank-bhowmick.cloud.okteto.net/upload
