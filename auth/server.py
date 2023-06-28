@@ -1,16 +1,63 @@
-import jwt, datetime, os
+import ssl
+import jwt
+import datetime
+import os
+# load env
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask, request
-from flask_mysqldb import MySQL
+import MySQLdb
+from kubernetes import client, config
+
+try:
+    # If we're inside a pod, load the kubeconfig file from the environment.
+    config.load_incluster_config()
+
+except config.config_exception.ConfigException:
+    # If we're not inside a pod, load the kubeconfig file.
+    config.load_kube_config()
+
+
+v1 = client.CoreV1Api()
+
+# Here "auth-certificate" is the configmap in which the cacert.pem file is present 
+# and "mrinank-bhowmick" is the namespace
+ 
+config_map = v1.read_namespaced_config_map("auth-certificate", "mrinank-bhowmick")
+cacert_pem = config_map.data.get("cacert.pem")
 
 server = Flask(__name__)
-mysql = MySQL(server)
 
-# config
-server.config["MYSQL_HOST"] = os.environ.get("MYSQL_HOST")
-server.config["MYSQL_USER"] = os.environ.get("MYSQL_USER")
-server.config["MYSQL_PASSWORD"] = os.environ.get("MYSQL_PASSWORD")
-server.config["MYSQL_DB"] = os.environ.get("MYSQL_DB")
-server.config["MYSQL_PORT"] = int(os.environ.get("MYSQL_PORT"))
+# MySQL SSL/TLS configuration
+try:
+    #print(cacert_pem)
+    with open("cacert.pem", "w",encoding="utf-8") as f:
+        f.write(cacert_pem)
+
+    ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    ssl_context.load_verify_locations(cafile="cacert.pem")
+
+    
+except Exception as e:
+    print(f"Error loading CA certificate: {str(e)}")
+
+try:
+    ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    ssl_context.load_verify_locations(cafile="cacert.pem")
+    ssl_context.check_hostname = False
+
+    connection = MySQLdb.connect(
+        host=os.environ.get("MYSQL_HOST"),
+        user=os.environ.get("MYSQL_USER"),
+        password=os.environ.get("MYSQL_PASSWORD"),
+        db=os.environ.get("MYSQL_DB"),
+        port=int(os.environ.get("MYSQL_PORT")),
+        ssl=ssl_context
+    )
+
+    
+except Exception as e:
+    print(f"Error connecting to MySQL: {str(e)}")
 
 
 @server.route("/login", methods=["POST"])
@@ -19,8 +66,8 @@ def login():
     if not auth:
         return "missing credentials", 401
 
-    # check db for username and password
-    cur = mysql.connection.cursor()
+    
+    cur = connection.cursor()
     res = cur.execute(
         "SELECT email, password FROM user WHERE email=%s", (auth.username,)
     )
@@ -45,7 +92,7 @@ def register():
         return "missing credentials", 401
 
     # check db for username and password
-    cur = mysql.connection.cursor()
+    cur = connection.cursor()
     res = cur.execute(
         "SELECT email, password FROM user WHERE email=%s", (auth.username,)
     )
@@ -57,7 +104,7 @@ def register():
             "INSERT INTO user (email, password) VALUES (%s, %s)",
             (auth.username, auth.password),
         )
-        mysql.connection.commit()
+        connection.commit()
         return "user created", 200
 
 

@@ -4,7 +4,6 @@ metadata:
   name: auth
   labels:
     app: auth
-
 spec:
   replicas: 2
   selector:
@@ -24,11 +23,17 @@ spec:
           image: mrinank/auth:latest
           ports:
             - containerPort: 5000
-          volumeMounts:
-            - name: auth-secret
-              mountPath: /main_app/secrets
-              readOnly: true
           env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secret
+                  key: MYSQL_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secret
+                  key: JWT_SECRET
             - name: MYSQL_HOST
               valueFrom:
                 secretKeyRef:
@@ -39,11 +44,6 @@ spec:
                 secretKeyRef:
                   name: auth-secret
                   key: MYSQL_USER
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: auth-secret
-                  key: MYSQL_PASSWORD
             - name: MYSQL_DB
               valueFrom:
                 secretKeyRef:
@@ -54,12 +54,3 @@ spec:
                 secretKeyRef:
                   name: auth-secret
                   key: MYSQL_PORT
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: auth-secret
-                  key: JWT_SECRET
-      volumes:
-        - name: auth-secret
-          secret:
-            secretName: auth-secret
