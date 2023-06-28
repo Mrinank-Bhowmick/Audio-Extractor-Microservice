@@ -2,8 +2,10 @@ import ssl
 import jwt
 import datetime
 import os
+
 # load env
 from dotenv import load_dotenv
+
 load_dotenv()
 from flask import Flask, request
 import MySQLdb
@@ -20,9 +22,9 @@ except config.config_exception.ConfigException:
 
 v1 = client.CoreV1Api()
 
-# Here "auth-certificate" is the configmap in which the cacert.pem file is present 
+# Here "auth-certificate" is the configmap in which the cacert.pem file is present
 # and "mrinank-bhowmick" is the namespace
- 
+
 config_map = v1.read_namespaced_config_map("auth-certificate", "mrinank-bhowmick")
 cacert_pem = config_map.data.get("cacert.pem")
 
@@ -30,14 +32,14 @@ server = Flask(__name__)
 
 # MySQL SSL/TLS configuration
 try:
-    #print(cacert_pem)
-    with open("cacert.pem", "w",encoding="utf-8") as f:
+    # print(cacert_pem)
+    with open("cacert.pem", "w", encoding="utf-8") as f:
         f.write(cacert_pem)
 
     ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     ssl_context.load_verify_locations(cafile="cacert.pem")
 
-    
+
 except Exception as e:
     print(f"Error loading CA certificate: {str(e)}")
 
@@ -52,10 +54,10 @@ try:
         password=os.environ.get("MYSQL_PASSWORD"),
         db=os.environ.get("MYSQL_DB"),
         port=int(os.environ.get("MYSQL_PORT")),
-        ssl=ssl_context
+        ssl=ssl_context,
     )
 
-    
+
 except Exception as e:
     print(f"Error connecting to MySQL: {str(e)}")
 
@@ -66,7 +68,6 @@ def login():
     if not auth:
         return "missing credentials", 401
 
-    
     cur = connection.cursor()
     res = cur.execute(
         "SELECT email, password FROM user WHERE email=%s", (auth.username,)
