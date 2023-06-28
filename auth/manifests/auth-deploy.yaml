@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: auth
   labels:
-    app: auth
+    app: auth 
 spec:
   replicas: 2
   selector:
